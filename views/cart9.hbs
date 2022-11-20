@@ -1,0 +1,68 @@
+
+
+
+  <form action="/checkout" method="POST">
+
+    <script
+          src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+          data-key='pk_test_RBqRxgcTy9sSIwuiB62CEC5v00OTSiSYKr'
+         <!-- data-amount="{{this.price}}"-->
+             data-name="Cash Requisition"
+          data-description="Premium Package"
+          data-image="/img/marketplace.png"
+          data-locale="auto">
+        </script>
+     
+                                                              <!--  <button   type="submit" class="checkout-button button alt wc-forward">
+	 checkout</button>-->
+
+                                                                </form>
+
+
+
+        <!--  <script
+          src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+          data-key='pk_test_RBqRxgcTy9sSIwuiB62CEC5v00OTSiSYKr'
+       
+             data-name="Perfect Pair"
+          data-description="Premium Package"
+          data-image="/img/marketplace.png"
+          data-locale="auto">
+        </script>      
+                                                                                                           <script>
+                                                                                                    
+
+
+
+ function buttonClick(){
+
+console.log('pakaipa')
+ 
+
+  $.ajax({
+    url: '/checkout',
+    type: 'POST',
+    contentType: "application/json",
+    
+      success: function() {
+    
+   
+      ;
+        console.log('success')
+        alert('Product successfully added to the cart')
+      
+    }
+  });
+  
+ }
+
+
+
+ 
+
+
+       
+
+
+
+                                                                                                </script>

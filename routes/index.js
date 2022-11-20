@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 var Cart = require('../models/cart');
 var Category = require('../models/category');
-
+const keys = require('../config1/keys')
+const stripe = require('stripe')('sk_test_IbxDt5lsOreFtqzmDUFocXIp0051Hd5Jol');
 var Product = require('../models/product');
 var Order = require('../models/order');
 var xlsx = require('xlsx')
@@ -32,18 +33,25 @@ var upload = multer({
 
 
 router.get('/',function(req, res, next){
+  var successMsg = req.flash('success')[0];
   Product.find({type:'sneaker'},function (err, docs) {
       var productChunks = [];
       var chunkSize = 1;
       for (var i = 0; i < docs.length; i += chunkSize) {
           productChunks.push(docs.slice(i, i + chunkSize));
       }
-      res.render('index1',{products: productChunks})
+      res.render('index1',{products: productChunks,successMsg: successMsg, noMessages: !successMsg})
   })
  
   
 })
 
+router.get("/logout", (req, res) => {
+  req.logout(req.user, err => {
+    if(err) return next(err);
+    res.redirect("/");
+  });
+});
 
 router.get('/sneakers',function(req, res, next){
   Product.find({type:'sneaker'},function (err, docs) {
@@ -331,6 +339,7 @@ res.render('searc',{name:name, filename:filename,id:id,price:price, products:pro
 
 
 router.get('/cart', function(req, res, next) {
+
     if (!req.session.cart) {
         return res.render('cartX', {products: null});
     } 
@@ -338,6 +347,8 @@ router.get('/cart', function(req, res, next) {
      console.log(cart.generateArray(),'vhura cart')
      res.render('cartX', {products: cart.generateArray(), totalPrice: cart.totalPrice});
  });
+
+
 
 
 router.get('/about',function(req,res){
@@ -402,9 +413,9 @@ router.get('/add-to-cart/:id', function(req, res, next) {
         console.log(productId,'productId')
       
        
-        res.send(cart);
+        //res.send(cart);
        // console.log(req.session.cart);
-       // res.redirect('/');
+       res.redirect('/');
     });
 });
 
@@ -599,25 +610,9 @@ router.post('/autoTS',function(req,res){
 
 
 
-/*
-router.get('/search/:productId',function(req,res){
-
-
-    var productId = req.params.id;
-
-    Product.findById(productId, function(err, product) {
-    var filename = product.filename
-    var name = product.name
-    
-    res.render('searc',{filename:filename,name:name,id:productId})
-
-
-
-    })
-
-    })
-*/
-
+router.get('/test',function(req,res){
+  res.render('cart9')
+})
 
 router.get('/add-to-cart1/:id', function(req, res, next) {
     var productId = req.params.id;
@@ -684,19 +679,19 @@ router.get('/remove/:id', function(req, res, next) {
 });
 
 
-
+/*
 router.get('/checkout', function(req, res, next) {
     if (!req.session.cart) {
-        return res.redirect('/shopping-cart');
+        return res.redirect('/cart');
     }
     var cart = new Cart(req.session.cart);
     var errMsg = req.flash('error')[0];
-    res.render('shop/checkout', {total: cart.totalPrice, errMsg: errMsg, noError: !errMsg});
+    res.render('checkout', {total: cart.totalPrice, errMsg: errMsg, noError: !errMsg});
 });
-
-router.post('/checkout',  function(req, res, next) {
+*/
+router.post('/checkout',isLoggedIn,  function(req, res, next) {
     if (!req.session.cart) {
-        return res.redirect('/shopping-cart');
+        return res.redirect('/cart');
     }
     var cart = new Cart(req.session.cart);
     
@@ -704,25 +699,28 @@ router.post('/checkout',  function(req, res, next) {
         "sk_test_IbxDt5lsOreFtqzmDUFocXIp0051Hd5Jol"
     );
 
+   
+
     stripe.charges.create({
         amount: cart.totalPrice * 100,
         currency: "usd",
-        source: req.body.stripeToken, // obtained with Stripe.js
+        source:  "tok_mastercard", // obtained with Stripe.js
         description: "Test Charge"
     }, function(err, charge) {
         if (err) {
-            req.flash('error', err.message);
-            return res.redirect('/checkout');
+       
+            console.log(err.message)
+            console.log(req.body.slot,'ma1')
+            return res.redirect('/cart');
         }
         var order = new Order({
             user: req.user,
             cart: cart,
-            address: req.body.address,
-            name: req.body.name,
             paymentId: charge.id
         });
         order.save(function(err, result) {
             req.flash('success', 'Successfully bought product!');
+            console.log('success', 'Successfully bought product!');
             req.session.cart = null;
             res.redirect('/');
         });
@@ -1069,6 +1067,13 @@ req.body.filename = record.filename
 module.exports = router;
 
 
+function isLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+      return next();
+  }
+  req.session.oldUrl = req.url;
+  res.redirect('/user/signin');
+}
 
 //pk_test_RBqRxgcTy9sSIwuiB62CEC5v00OTSiSYKr
 //sk_test_IbxDt5lsOreFtqzmDUFocXIp0051Hd5Jol
