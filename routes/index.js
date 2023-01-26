@@ -689,6 +689,7 @@ router.get('/checkout', function(req, res, next) {
     res.render('checkout', {total: cart.totalPrice, errMsg: errMsg, noError: !errMsg});
 });
 */
+
 router.post('/checkout',isLoggedIn,  function(req, res, next) {
     if (!req.session.cart) {
         return res.redirect('/cart');
