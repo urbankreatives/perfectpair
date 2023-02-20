@@ -4881,6 +4881,7 @@ body:not([class*=haaken-core]) .qodef-mobile-header-navigation ul li .qodef-menu
     display: none
 }
 
+/*
 .qodef-header-navigation>ul>li>a:hover {
     color: #000
 }
@@ -4888,7 +4889,7 @@ body:not([class*=haaken-core]) .qodef-mobile-header-navigation ul li .qodef-menu
 .qodef-header-navigation>ul>li>a:hover span:before {
     width: calc(100% + 21px)
 }
-
+*/
 .qodef-header-navigation>ul>li.current-menu-ancestor>a,
 .qodef-header-navigation>ul>li.current-menu-item>a {
     color: #000

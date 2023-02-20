@@ -616,7 +616,7 @@ s,
 samp,
 small,
 span,
-strike,
+
 strong,
 sub,
 sup,
@@ -4702,7 +4702,7 @@ body:not([class*=haaken-core]) .qodef-mobile-header-navigation ul li .qodef-menu
 .qodef-mobile-header-navigation>ul>li>a span:before {
     top: calc(50% - 2px)
 }
-
+/*
 .qodef-mobile-header-navigation>ul>li>a:hover {
     color: #000
 }
@@ -4710,7 +4710,7 @@ body:not([class*=haaken-core]) .qodef-mobile-header-navigation ul li .qodef-menu
 .qodef-mobile-header-navigation>ul>li>a:hover span:before {
     width: calc(100% + 21px)
 }
-
+*/
 .qodef-mobile-header-navigation>ul>li.current-menu-ancestor>a,
 .qodef-mobile-header-navigation>ul>li.current-menu-item>a {
     color: #000
@@ -4880,7 +4880,7 @@ body:not([class*=haaken-core]) .qodef-mobile-header-navigation ul li .qodef-menu
 .qodef-header-navigation>ul>li>a .qodef-menu-item-arrow {
     display: none
 }
-
+/*
 .qodef-header-navigation>ul>li>a:hover {
     color: #000
 }
@@ -4888,7 +4888,7 @@ body:not([class*=haaken-core]) .qodef-mobile-header-navigation ul li .qodef-menu
 .qodef-header-navigation>ul>li>a:hover span:before {
     width: calc(100% + 21px)
 }
-
+*/
 .qodef-header-navigation>ul>li.current-menu-ancestor>a,
 .qodef-header-navigation>ul>li.current-menu-item>a {
     color: #000

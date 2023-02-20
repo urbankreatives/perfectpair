@@ -67,6 +67,7 @@ router.get('/sneakers',function(req, res, next){
 })
 
 
+
 router.get('/heels',function(req, res, next){
   Product.find({type:'heels'},function (err, docs) {
       var productChunks = [];
@@ -356,6 +357,10 @@ router.get('/about',function(req,res){
 })
 
 
+
+router.get('/contact',function(req,res){
+  res.render('contact2')
+})
 
   router.get('/review/:id',function(req,res){
     var id = req.params.id

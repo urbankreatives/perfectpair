@@ -4703,13 +4703,14 @@ body:not([class*=haaken-core]) .qodef-mobile-header-navigation ul li .qodef-menu
     top: calc(50% - 2px)
 }
 
+/*
 .qodef-mobile-header-navigation>ul>li>a:hover {
     color: #000
 }
 
 .qodef-mobile-header-navigation>ul>li>a:hover span:before {
     width: calc(100% + 21px)
-}
+}*/
 
 .qodef-mobile-header-navigation>ul>li.current-menu-ancestor>a,
 .qodef-mobile-header-navigation>ul>li.current-menu-item>a {
@@ -4881,13 +4882,15 @@ body:not([class*=haaken-core]) .qodef-mobile-header-navigation ul li .qodef-menu
     display: none
 }
 
+
+/*
 .qodef-header-navigation>ul>li>a:hover {
     color: #000
 }
 
 .qodef-header-navigation>ul>li>a:hover span:before {
     width: calc(100% + 21px)
-}
+}*/
 
 .qodef-header-navigation>ul>li.current-menu-ancestor>a,
 .qodef-header-navigation>ul>li.current-menu-item>a {
