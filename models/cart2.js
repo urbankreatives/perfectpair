@@ -1,20 +1,17 @@
-module.exports = function Cart(oldCart) {
+module.exports = function CartX(oldCart) {
     this.items = oldCart.items || {};
     this.totalQty = oldCart.totalQty || 0;
     this.totalPrice = oldCart.totalPrice || 0;
-    this.totalPrice2 = oldCart.totalPrice2 || 0;
 
     this.add = function(item, id) {
         var storedItem = this.items[id];
         if (!storedItem) {
-            storedItem = this.items[id] = {item: item, qty: 0, price: 0, price2:0};
+            storedItem = this.items[id] = {item: item, qty: 0, price: 0};
         }
         storedItem.qty++;
-        storedItem.price = storedItem.item.price * storedItem.qty;
-        storedItem.price2 = storedItem.item.price2 * storedItem.qty;
+        storedItem.price = storedItem.item.price2 * storedItem.qty;
         this.totalQty++;
-        this.totalPrice += storedItem.item.price;
-        this.totalPrice2 += storedItem.item.price2;
+        this.totalPrice += storedItem.item.price2;
     };
 
     this.reduceByOne = function(id) {

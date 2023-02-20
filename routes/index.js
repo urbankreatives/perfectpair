@@ -339,7 +339,7 @@ res.render('searc',{name:name, filename:filename,id:id,price:price, products:pro
 
 
 
-router.get('/cart', function(req, res, next) {
+router.get('/cart',isLoggedIn, function(req, res, next) {
 
     if (!req.session.cart) {
         return res.render('cartX', {products: null});
@@ -1074,12 +1074,14 @@ module.exports = router;
 
 
 function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-      return next();
+  if (!req.isAuthenticated()) {
+req.session.returnTo = req.originalUrl
+    return res.redirect('/auth/signin')
   }
-  req.session.oldUrl = req.url;
-  res.redirect('/user/signin');
-}
+  else{
+      next()
+  }
+  }
 
 //pk_test_RBqRxgcTy9sSIwuiB62CEC5v00OTSiSYKr
 //sk_test_IbxDt5lsOreFtqzmDUFocXIp0051Hd5Jol

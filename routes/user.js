@@ -1,65 +1,55 @@
 var express = require('express');
 var router = express.Router();
-
-var passport = require('passport');
-
+var User = require('../models/user');
+var Cart = require('../models/cartX');
+var Cart2 = require('../models/cart2');
+var Category = require('../models/category');
+var nodemailer = require('nodemailer');
+var Product = require('../models/product');
 var Order = require('../models/order');
-var Cart = require('../models/cart');
+var Make = require('../models/make');
+var Models = require('../models/models');
+var xlsx = require('xlsx')
+var multer = require('multer')
+const fs = require('fs')
+var path = require('path');
+var passport = require('passport');
+var moment = require('moment')
+/*const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;*/
+const jwt = require('jsonwebtoken');
+const JWT_KEY = "jwtactive987";
+const JWT_RESET_KEY = "jwtreset987";
+//const connectEnsureLogin = require('connect-ensure-login')
 
 
 
-  //logout route
-
-
-
-
-router.get('/signup', function (req, res, next) {
-    var messages = req.flash('error');
-    res.render('user/signup', { messages: messages, hasErrors: messages.length > 0});
+router.get('/profile', isLoggedIn, function (req, res, next) {
+    Order.find({user: req.user}, function(err, orders) {
+        if (err) {
+            return res.write('Error!');
+        }
+        var cart;
+        orders.forEach(function(order) {
+            cart = new Cart(order.cart);
+            order.items = cart.generateArray();
+        });
+        res.render('prof', { orders: orders });
+    });
 });
 
-router.post('/signup', passport.authenticate('local.signup', {
-    failureRedirect: '/user/signup',
-    failureFlash: true
-}), function (req, res, next) {
-    if (req.session.oldUrl) {
-        var oldUrl = req.session.oldUrl;
-        req.session.oldUrl = null;
-        res.redirect(oldUrl);
-    } else {
-        res.redirect('/user/profile');
-    }
-});
-
-
-
-router.get('/signin', function (req, res, next) {
-    var messages = req.flash('error');
-    res.render('user/signin', { messages: messages, hasErrors: messages.length > 0});
-});
-
-router.post('/signin', passport.authenticate('local.signin', {
-    failureRedirect: '/user/signin',
-    failureFlash: true,
-    
-}), function (req, res, next) {
-    if (req.session.oldUrl) {
-        var oldUrl = req.session.oldUrl;
-        req.session.oldUrl = null;
-        res.redirect(oldUrl);
-    } else {
-        res.redirect('/cart');
-    }
-});
-
-
-
+  
 module.exports = router;
 
+
 function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
+    if (!req.isAuthenticated()) {
+        req.flash('error', 'You must be signed in first!');
+        return res.redirect('/auth/signin');
     }
-    req.session.oldUrl = req.url;
-    res.redirect('/user/signin');
-}
+    next();
+    }
+    
+  
+  
+  

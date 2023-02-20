@@ -19,6 +19,7 @@ var xlsx = require('xlsx')
 
 var routes = require('./routes/index');
 var userRoutes = require('./routes/user');
+var authRoutes = require('./routes/auth');
 
 
 var app = express();
@@ -55,20 +56,25 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
-    res.locals.login = req.isAuthenticated();
-    res.locals.session = req.session;
-    res.locals.oldUrl = req.url;
-    res.locals.message = req.session.message;
-    req.session.message = null;
-    next();
+    if (!['/auth/signin', '/auth/signup'].includes(req.originalUrl)) {
+      console.log(req.originalUrl,'iiwe ma1');
+      req.session.returnTo = req.originalUrl;
+  }
+  res.locals.currentUser = req.user;
+  res.locals.notUser = !req.user;
+      res.locals.session = req.session;
+  res.locals.success = req.flash('success');
+  res.locals.error = req.flash('error');
+  next();
 });
 
+app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
-
 app.use('/', routes)
 
 
-const port = process.env.PORT || 5000;
+
+const port = process.env.PORT || 8000;
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
