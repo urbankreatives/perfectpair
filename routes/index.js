@@ -356,6 +356,9 @@ router.get('/about',function(req,res){
     res.render('about')
 })
 
+router.get('/reg',function(req,res){
+  res.render('register')
+})
 
 
 router.get('/contact',function(req,res){
