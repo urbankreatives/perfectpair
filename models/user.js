@@ -7,6 +7,7 @@ var userSchema = new Schema({
     category: {type: String, required: true},
     num: {type: Number, required: true},
     role:{type:String,required:true},
+    uid:{type:String,required:true},
     photo:{type:String,required:true},
     mobile:{type:String,required:true},
     password: {type: String, required: true}

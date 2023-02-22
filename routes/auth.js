@@ -177,6 +177,7 @@ router.get('/signup',function(req,res){
                       user.role = 'client'
                       user.uid = 'null'
                       user.mobile = mobile
+                      user.photo = 'propic.jpg'
                       user.password = user.encryptPassword(password)
                       user.save()
                         .then(user =>{
