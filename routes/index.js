@@ -10,6 +10,7 @@ var xlsx = require('xlsx')
 var multer = require('multer')
 const fs = require('fs')
 var path = require('path');
+var moment = require('moment')
 
 
 
@@ -40,7 +41,7 @@ router.get('/',function(req, res, next){
       for (var i = 0; i < docs.length; i += chunkSize) {
           productChunks.push(docs.slice(i, i + chunkSize));
       }
-      res.render('index1',{products: productChunks,successMsg: successMsg, noMessages: !successMsg})
+      res.render('index1',{/*products: productChunks,*/successMsg: successMsg, noMessages: !successMsg})
   })
  
   
@@ -95,6 +96,10 @@ router.get('/flat',function(req, res, next){
   
 })
 
+
+router.get('/login',function(req,res){
+  res.render('login')
+})
 
 router.get('/sbags',function(req, res, next){
   Product.find({type:'sling bag'},function (err, docs) {
@@ -406,30 +411,38 @@ router.get('/wrk',function(req, res, next){
 })
 
 router.get('/add-to-cart/:id', function(req, res, next) {
+  var m = moment()
+  var date = moment().toString();
     var productId = req.params.id;
+ 
     console.log(productId,'smolich')
     var cart = new Cart(req.session.cart ? req.session.cart : {});
+
     var total
 
     Product.findById(productId, function(err, product) {
        if (err) {
            return res.redirect('/sec');
        }
-        cart.add(product, product.id);
+        cart.add(product, product.id,  date);
         req.session.cart = cart;
+    
         console.log(product.id,'product')
         console.log(productId,'productId')
       
        
         //res.send(cart);
        // console.log(req.session.cart);
-       res.redirect('/');
+       res.send(cart);
     });
 });
 
-
 router.get('/add-to-cartX/:id', function(req, res, next) {
-  var productId = req.params.id;
+  var m = moment()
+  var date = moment().toString();
+    var productId = req.params.id;
+    var name = req.user.fullname
+    var mobile = req.user.mobile
   console.log(productId,'smolich')
   var cart = new Cart(req.session.cart ? req.session.cart : {});
   var total
@@ -438,7 +451,7 @@ router.get('/add-to-cartX/:id', function(req, res, next) {
      if (err) {
          return res.redirect('/sec');
      }
-      cart.add(product, product.id);
+     cart.add(product, product.id, name,mobile, date);
       req.session.cart = cart;
       console.log(product.id,'product')
       console.log(productId,'productId')
@@ -723,9 +736,16 @@ router.post('/checkout',isLoggedIn,  function(req, res, next) {
             return res.redirect('/cart');
         }
         var order = new Order({
-            user: req.user,
-            cart: cart,
-            paymentId: charge.id
+           
+
+          
+          paymentId:charge.id,
+          cart : cart,
+          email: email,
+          buyerName: fullname,
+          buyerMobile: mobile,
+          userId :id,
+          amount :cart.totalPrice
         });
         order.save(function(err, result) {
             req.flash('success', 'Successfully bought product!');
@@ -741,317 +761,6 @@ router.post('/checkout',isLoggedIn,  function(req, res, next) {
 
 
 
-
-
-
-
-  /*
-  router.get('/import',function(req,res){
-    res.render('imports')
-  })
-  
-
-  
-  router.post('/import', upload.single('file'),  (req,res)=>{
-   
-  
-    if(!req.file){
-        req.session.message = {
-          type:'errors',
-          message:'Select File!'
-        }     
-          res.render('imports/students', {message:req.session.message}) 
-        }else if (req.file.mimetype !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
-            req.session.message = {
-                type:'errors',
-                message:'Upload Excel File'
-              }     
-                res.render('imports', {message:req.session.message
-                     
-                 }) 
-  
-  
-  
-        }
-          
-        else{
-     
-
-        
-            const file = req.file.filename;
-    
-            
-                 var wb =  xlsx.readFile('./public/uploads/' + file)
-         
-                 var sheets = wb.Sheets;
-                 var sheetNames = wb.SheetNames;
-     
-                 var sheetName = wb.SheetNames[0];
-     var sheet = wb.Sheets[sheetName ];
-     
-        for (var i = 0; i < wb.SheetNames.length; ++i) {
-         var sheet = wb.Sheets[wb.SheetNames[i]];
-     
-         console.log(wb.SheetNames.length)
-         var data =xlsx.utils.sheet_to_json(sheet)
-             
-         var newData = data.map(async function (record){
-     
-        
-       
-      
-          
-         
-
-
-          
-
-req.body.name = record.name     
-req.body.price = record.price  
-req.body.description = record.description 
-req.body.status = record.status  
-req.body.category = record.category  
-req.body.title = record.title
-req.body.filename = record.filename  
-           
-
-            
-        
-            try{
-              req.check('price','Enter price').notEmpty();
-              req.check('name','Enter Name').notEmpty();
-              req.check('description','Enter Description').notEmpty();
-              req.check('status','Enter status').notEmpty();
-              req.check('title','Enter Title').notEmpty();
-              req.check('filename','Enter Filename').notEmpty();
-           
-
-
-              var errors = req.validationErrors();
-  
-              if (errors) {
-                
-                req.session.errors = errors;
-                req.session.success = false;
-                for(let x=0;x<req.session.errors.length;x++){
-                  throw new SyntaxError(req.session.errors[x].msg +" "+"on line")
-                }
-              
-          }
-
-
-      
-        
-          var product = new Product();
-                  product.name = req.body.name;
-                  product.price = req.body.price
-                  product.description = req.body.description;
-                  product.status = req.body.status;
-                  product.category= req.body.category;
-                  product.title = req.body.title
-                  product.filename = req.body.filename;
-            
-                
-                 
-                  product.save()
-                    .then(productId =>{
-
-                   
-                    })
-             
-                     
-                 
-                     
-                   
-                    // .catch(err => console.log(err))
-                  }
-                  catch(e){
-                    res.send(e.message)
-                   }
-                    })
-                  
-                  
-         
-                  }
-                  
-                  
-                    
-                    
-        
-                   
-        
-                    
-             
-                }
-      
-        
-  
-  
-  })
-  
-
-
-
-
-
-
-
-
-*/
-
-
-
-
-
-
-
-
-
-  
-  router.get('/import',function(req,res){
-    res.render('imports')
-  })
-  
-
-  
-  router.post('/import', upload.single('file'),  (req,res)=>{
-   
-  
-    if(!req.file){
-        req.session.message = {
-          type:'errors',
-          message:'Select File!'
-        }     
-          res.render('imports/students', {message:req.session.message}) 
-        }else if (req.file.mimetype !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
-            req.session.message = {
-                type:'errors',
-                message:'Upload Excel File'
-              }     
-                res.render('imports', {message:req.session.message
-                     
-                 }) 
-  
-  
-  
-        }
-          
-        else{
-     
-
-        
-            const file = req.file.filename;
-    
-            
-                 var wb =  xlsx.readFile('./public/uploads/' + file)
-         
-                 var sheets = wb.Sheets;
-                 var sheetNames = wb.SheetNames;
-     
-                 var sheetName = wb.SheetNames[0];
-     var sheet = wb.Sheets[sheetName ];
-     
-        for (var i = 0; i < wb.SheetNames.length; ++i) {
-         var sheet = wb.Sheets[wb.SheetNames[i]];
-     
-         console.log(wb.SheetNames.length)
-         var data =xlsx.utils.sheet_to_json(sheet)
-             
-         var newData = data.map(async function (record){
-     
-        
-       
-      
-          
-         
-
-
-          
-
-req.body.name = record.name     
-req.body.price = record.price  
-req.body.description = record.description 
-req.body.status = record.status  
-req.body.category = record.category  
-req.body.filename1 = record.filename1
-req.body.filename = record.filename  
-           
-
-            
-        
-            try{
-              req.check('price','Enter price').notEmpty();
-              req.check('name','Enter Name').notEmpty();
-              req.check('description','Enter Description').notEmpty();
-              req.check('status','Enter status').notEmpty();
-              req.check('category','Enter Category').notEmpty();
-              req.check('filename','Enter Filename').notEmpty();
-              req.check('filename1','Enter Filename').notEmpty();
-           
-
-
-              var errors = req.validationErrors();
-  
-              if (errors) {
-                
-                req.session.errors = errors;
-                req.session.success = false;
-                for(let x=0;x<req.session.errors.length;x++){
-                  throw new SyntaxError(req.session.errors[x].msg +" "+"on line")
-                }
-              
-          }
-
-
-      
-        
-          var product = new Product();
-                  product.name = req.body.name;
-                  product.price = req.body.price
-                  product.description = req.body.description;
-                  product.status = req.body.status;
-                  product.category= req.body.category;
-                  product.filename1 = req.body.filename1
-                  product.filename = req.body.filename;
-            
-                
-                 
-                  product.save()
-                    .then(productId =>{
-
-                   
-                    })
-             
-                     
-                 
-                     
-                   
-                    // .catch(err => console.log(err))
-                  }
-                  catch(e){
-                    res.send(e.message)
-                   }
-                    })
-                  
-                  
-         
-                  }
-                  
-                  
-                    
-                    
-        
-                   
-        
-                    
-             
-                }
-      
-        
-  
-  
-  })
-  
 
 
 

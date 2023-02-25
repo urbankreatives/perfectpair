@@ -33,12 +33,13 @@ router.get('/signup',function(req,res){
    router.post('/signup',function(req,res){
    
     email = req.body.email;
-    mobile = req.body.mobile
     password = req.body.password;
+    mobile = req.body.mobile
+    fullname = req.body.fullname
          req.check('email','Enter email ').notEmpty();
          req.check('mobile','Enter Phone Number ').notEmpty();
+         req.check('fullname','Enter FullName ').notEmpty();
          req.check('password','Enter password').notEmpty();
-  
          var errors = req.validationErrors();
               
          if (errors) {
@@ -68,7 +69,7 @@ router.get('/signup',function(req,res){
                
     
   
-         const token = jwt.sign({email,password }, JWT_KEY, { expiresIn: '100000m' });
+         const token = jwt.sign({email,password, mobile, fullname  }, JWT_KEY, { expiresIn: '100000m' });
          const CLIENT_URL = 'http://' + req.headers.host;
    
          const output = `
@@ -95,7 +96,7 @@ router.get('/signup',function(req,res){
          const mailOptions = {
              from: '"Admin" <cashreq00@gmail.com>', // sender address
              to: email, // list of receivers
-             subject: "Parts Connection Account Verification ✔", // Subject line
+             subject: "Perfect Pair Account Verification ✔", // Subject line
              html: output, // html body
          };
    
@@ -154,7 +155,7 @@ router.get('/signup',function(req,res){
                   res.render('user/signup',{message:req.session.message});
             }
             else {
-              const { email, password } = decodedToken;
+              const { email, password,fullname, mobile } = decodedToken;
                 User.findOne({ email: email }).then(user => {
                     if (user) {
                         //------------ User already exists ------------//
@@ -173,11 +174,11 @@ router.get('/signup',function(req,res){
                       
                       user.email = email;
                       user.num=0;
+                      user.mobile =mobile;
+                      user.fullname = fullname;
                       user.category = 'null';
                       user.role = 'client'
-                      user.uid = 'null'
-                      user.mobile = mobile
-                      user.photo = 'propic.jpg'
+                      user.photo='propic.jpg'
                       user.password = user.encryptPassword(password)
                       user.save()
                         .then(user =>{
@@ -224,7 +225,6 @@ router.get('/signup',function(req,res){
   
   
   
-  
     router.get('/signin', function (req, res, next) {
       var messages = req.flash('error');
       res.render('user/signin', { messages: messages, hasErrors: messages.length > 0});
@@ -233,16 +233,17 @@ router.get('/signup',function(req,res){
   router.post('/signin', passport.authenticate('local.signin', {
     failureRedirect: '/auth/signin',
     failureFlash: true,
+    successRedirect:'/cart',
     keepSessionInfo: true
-  }), function (req, res, next) {
+  })/*, function (req, res, next) {
    /*
     const redirectUrl = req.session.returnTo;
-    res.redirect(redirectUrl);*/
+    res.redirect(redirectUrl);
     console.log(req.session,'zvafa wangu'); // doesnt have returnTo inside anymore ?
-    res.redirect(req.session.returnTo || '/cart');
-    delete req.session.returnTo;
+    res.redirect( '/cart');
+   // delete req.session.returnTo;
     
-  });
+  }*/);
   
 
   /*
@@ -253,6 +254,7 @@ router.get('/signup',function(req,res){
  res.redirect(req.session.returnTo || '/');
  delete req.session.returnTo;
 };*/
+  
   
 module.exports = router;
 
