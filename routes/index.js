@@ -684,7 +684,6 @@ router.get('/add-to-cart3/:id', function(req, res, next) {
 router.get('/reduce/:id', function(req, res, next) {
     var productId = req.params.id;
     var cart = new Cart(req.session.cart ? req.session.cart : {});
-
     cart.reduceByOne(productId);
     req.session.cart = cart;
     res.redirect('/cart');
@@ -720,7 +719,10 @@ router.post('/checkout',isLoggedIn,  function(req, res, next) {
     var stripe = require("stripe")(
         "sk_test_IbxDt5lsOreFtqzmDUFocXIp0051Hd5Jol"
     );
-
+var id =req.user._id;
+var email = req.user.email
+var fullname = req.user.fullname
+var mobile = req.user.mobile
    
 
     stripe.charges.create({
@@ -739,7 +741,7 @@ router.post('/checkout',isLoggedIn,  function(req, res, next) {
            
 
           
-          paymentId:charge.id,
+         
           cart : cart,
           email: email,
           buyerName: fullname,
