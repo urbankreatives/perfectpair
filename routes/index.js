@@ -441,8 +441,7 @@ router.get('/add-to-cartX/:id', function(req, res, next) {
   var m = moment()
   var date = moment().toString();
     var productId = req.params.id;
-    var name = req.user.fullname
-    var mobile = req.user.mobile
+  
   console.log(productId,'smolich')
   var cart = new Cart(req.session.cart ? req.session.cart : {});
   var total
@@ -451,7 +450,7 @@ router.get('/add-to-cartX/:id', function(req, res, next) {
      if (err) {
          return res.redirect('/sec');
      }
-     cart.add(product, product.id, name,mobile, date);
+     cart.add(product, product.id,  date);
       req.session.cart = cart;
       console.log(product.id,'product')
       console.log(productId,'productId')

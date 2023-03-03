@@ -27,7 +27,7 @@ var authRoutes = require('./routes/auth');
 var app = express();
 
 
-mongoose.connect(process.env.MONGO_URL ||'mongodb://0.0.0.0:27017/spareDB',{
+mongoose.connect(process.env.MONGO_URL ||'mongodb://0.0.0.0:27017/perfDB',{
     useNewUrlParser:true,
     useUnifiedTopology:true
 } )
@@ -54,8 +54,8 @@ app.use(validator());
 
 app.use(cookieParser());
 
-const dbUrl =process.env.MONGO_URL ||'mongodb://0.0.0.0:27017/spareDB';
-mongoose.connect(process.env.MONGO_URL ||'mongodb://0.0.0.0:27017/spareDB',{
+const dbUrl =process.env.MONGO_URL ||'mongodb://0.0.0.0:27017/perDB';
+mongoose.connect(process.env.MONGO_URL ||'mongodb://0.0.0.0:27017/perfDB',{
     useNewUrlParser:true,
     useUnifiedTopology:true
 } )

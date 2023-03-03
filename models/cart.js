@@ -4,10 +4,10 @@ module.exports = function Cart(oldCart) {
     this.totalPrice = oldCart.totalPrice || 0;
     this.totalPrice2 = oldCart.totalPrice2 || 0;
 
-    this.add = function(item, id, name, mobile,date) {
+    this.add = function(item, id, date) {
         var storedItem = this.items[id];
         if (!storedItem) {
-            storedItem = this.items[id] = {item: item, qty: 0, price: 0, price2:0, buyerName:name, buyerMobile:mobile, status:'pending', date:date};
+            storedItem = this.items[id] = {item: item, qty: 0, price: 0, price2:0,   status:'pending', date:date};
         }
         storedItem.qty++;
         storedItem.price = storedItem.item.price * storedItem.qty;
