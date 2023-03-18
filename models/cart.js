@@ -4,17 +4,32 @@ module.exports = function Cart(oldCart) {
     this.totalPrice = oldCart.totalPrice || 0;
     this.totalPrice2 = oldCart.totalPrice2 || 0;
 
-    this.add = function(item, id, date) {
+    this.add = function(item,price, id, date, pqty) {
         var storedItem = this.items[id];
+        
         if (!storedItem) {
-            storedItem = this.items[id] = {item: item, qty: 0, price: 0, price2:0,   status:'pending', date:date};
+            storedItem = this.items[id] = {item: item, qty: 0, price: 0, price2:0,pqty:pqty,   status:'pending', date:date};
         }
+      
+ /*else if(storedItem.qty >= pqty){
+    console.log(storedItem.qty,'storedItem2')
+        console.log(pqty,'product quantity2')
+    storedItem.qty;
+    storedItem.price = storedItem.item.price * storedItem.qty;
+    storedItem.price2 = storedItem.item.price2 * storedItem.qty;
+    this.totalQty;
+    this.totalPrice = storedItem.item.price;
+    this.totalPrice2 = storedItem.item.price2;
+ } else */
         storedItem.qty++;
         storedItem.price = storedItem.item.price * storedItem.qty;
         storedItem.price2 = storedItem.item.price2 * storedItem.qty;
         this.totalQty++;
         this.totalPrice += storedItem.item.price;
+        console.log(this.totalPrice,'totalPrice 4')
         this.totalPrice2 += storedItem.item.price2;
+        console.log(storedItem.qty,'storedItem4')
+        console.log(pqty,'product quantity4')
     };
 
     this.reduceByOne = function(id) {

@@ -12,6 +12,8 @@ var schema = new Schema({
     buyerName:{type:String, required:true},
     buyerMobile:{type:String, required:true},
     status:{type:String,required:true},
+    size:{type:String,required:true},
+    color:{type:String,required:true},
     date:{type:String,required:true},
     price: {type: Number, required: true},
 
