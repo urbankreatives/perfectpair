@@ -515,6 +515,10 @@ router.get('/wrk',function(req, res, next){
    
 })
 
+router.get('/invoice',function(req,res){
+  res.render('create')
+})
+
 router.get('/add-to-cart/:id', function(req, res, next) {
   var m = moment()
   var date = moment().toString();
